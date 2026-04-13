@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NUSACYBERA V4</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cyan:#00f5ff;--orange:#ff6b00;--green:#00ff88;--pink:#ff69b4;--red:#ff2244;--purple:#9b59b6;
+  --dark:#020810;--dark2:#050f1a;--dark3:#0a1628;--dark4:#0d1f35;
+  --border:rgba(0,245,255,0.18);--glass:rgba(0,245,255,0.05);--glass2:rgba(0,245,255,0.1);
+  --text:#a0c4d8;--white:#e0f4ff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--dark);color:var(--white);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,245,255,0.008) 2px,rgba(0,245,255,0.008) 4px);pointer-events:none;z-index:9999;}
+.bg-grid{position:fixed;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(0,245,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.025) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0;}
+
+/* LAMP OFF - MAINTENANCE */
+.maintenance-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9990;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:20px;text-align:center;}
+.maintenance-screen.show{display:flex;}
+.lamp-red{width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,#ff2244,#8b0000);box-shadow:0 0 40px rgba(255,34,68,0.8),0 0 80px rgba(255,34,68,0.4);animation:pulse-red 1.5s infinite;}
+@keyframes pulse-red{0%,100%{box-shadow:0 0 40px rgba(255,34,68,0.8),0 0 80px rgba(255,34,68,0.4);}50%{box-shadow:0 0 20px rgba(255,34,68,0.4),0 0 40px rgba(255,34,68,0.2);}}
+.maintenance-title{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:#ff2244;letter-spacing:2px;text-shadow:0 0 20px rgba(255,34,68,0.5);}
+.maintenance-subtitle{font-family:'Share Tech Mono',monospace;font-size:13px;color:#ff6666;letter-spacing:1px;}
+.maintenance-msg{font-size:14px;color:var(--text);font-family:'Share Tech Mono',monospace;line-height:1.8;max-width:320px;background:rgba(255,34,68,0.05);border:1px solid rgba(255,34,68,0.2);border-radius:10px;padding:14px;}
+.maintenance-divider{width:60px;height:2px;background:linear-gradient(90deg,transparent,#ff2244,transparent);margin:4px auto;}
+.owner-login-box{background:rgba(0,0,0,0.6);border:1px solid rgba(255,34,68,0.3);border-radius:12px;padding:16px;width:100%;max-width:300px;}
+.owner-login-title{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);text-align:center;margin-bottom:12px;letter-spacing:2px;}
+.maintenance-input{background:rgba(0,0,0,0.5);border:1px solid rgba(255,34,68,0.25);border-radius:8px;padding:10px 14px;color:var(--white);font-family:'Rajdhani',sans-serif;font-size:14px;outline:none;width:100%;margin-bottom:8px;}
+.maintenance-input:focus{border-color:#ff2244;}
+.maintenance-btn{background:rgba(255,34,68,0.15);border:1px solid #ff2244;color:#ff6666;padding:10px 24px;border-radius:8px;font-family:'Orbitron',sans-serif;font-size:10px;cursor:pointer;letter-spacing:2px;width:100%;}
+
+/* NAVBAR */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--dark2);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(10px);}
+.nav-logo{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:900;color:var(--cyan);letter-spacing:2px;text-shadow:0 0 15px rgba(0,245,255,0.4);}
+.nav-logo span{color:var(--orange);}
+.nav-logo .v4{font-size:10px;background:var(--orange);color:#fff;padding:2px 5px;border-radius:3px;margin-left:4px;vertical-align:middle;}
+.nav-right{display:flex;align-items:center;gap:8px;}
+.nav-lamp{font-size:16px;cursor:default;}
+.btn-profile{background:transparent;border:none;cursor:pointer;padding:0;position:relative;}
+.profile-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;color:var(--dark);border:2px solid var(--cyan);overflow:hidden;}
+.profile-avatar img{width:100%;height:100%;object-fit:cover;}
+.btn-logout{background:transparent;border:1px solid rgba(255,34,68,0.3);color:var(--red);padding:4px 10px;border-radius:4px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:11px;}
+
+/* PROFILE MODAL */
+.profile-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:300;display:none;align-items:flex-end;justify-content:center;}
+.profile-modal.show{display:flex;}
+.profile-sheet{background:var(--dark2);border:1px solid var(--border);border-radius:20px 20px 0 0;width:100%;max-width:500px;padding:24px 20px 40px;position:relative;max-height:90vh;overflow-y:auto;}
+.profile-sheet::before{content:'';position:absolute;top:10px;left:50%;transform:translateX(-50%);width:40px;height:4px;background:var(--border);border-radius:2px;}
+.profile-header-img{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:28px;font-weight:700;color:var(--dark);margin:0 auto 12px;border:3px solid var(--cyan);overflow:hidden;position:relative;}
+.profile-header-img img{width:100%;height:100%;object-fit:cover;}
+.profile-change-photo{position:absolute;bottom:0;right:0;background:var(--cyan);border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;}
+.profile-username{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;text-align:center;color:var(--white);}
+.profile-role-badge{display:inline-block;padding:3px 10px;border-radius:10px;font-family:'Share Tech Mono',monospace;font-size:10px;margin:6px auto;display:block;width:fit-content;}
+.badge-owner{background:rgba(255,107,0,0.15);border:1px solid rgba(255,107,0,0.4);color:var(--orange);}
+.badge-ceowner{background:rgba(255,105,180,0.15);border:1px solid rgba(255,105,180,0.4);color:var(--pink);}
+.badge-admin{background:rgba(255,0,255,0.1);border:1px solid rgba(255,0,255,0.3);color:#ff00ff;}
+.badge-moderator{background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);color:var(--green);}
+.badge-member{background:var(--glass);border:1px solid var(--border);color:var(--text);}
+.profile-info-grid{display:grid;gap:8px;margin:14px 0;}
+.profile-info-item{background:var(--dark3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;}
+.profile-info-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text);}
+.profile-info-value{font-size:13px;color:var(--white);font-weight:600;}
+.profile-points{background:linear-gradient(135deg,rgba(0,245,255,0.1),rgba(155,89,182,0.1));border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;margin:10px 0;}
+.points-num{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;color:var(--cyan);}
+.points-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);}
+.badge-earned{display:inline-block;font-size:18px;margin:2px;}
+.btn-edit-bio{width:100%;background:var(--glass2);border:1px solid var(--border);color:var(--cyan);padding:10px;border-radius:8px;font-family:'Orbitron',sans-serif;font-size:10px;cursor:pointer;letter-spacing:2px;margin-top:6px;}
+.btn-close-profile{width:100%;background:var(--glass);border:1px solid var(--border);color:var(--text);padding:10px;border-radius:8px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:14px;margin-top:8px;}
+
+/* BIO EDIT */
+.bio-section{margin-top:12px;display:none;}
+.bio-section.show{display:block;}
+.form-group{margin-bottom:12px;}
+.form-label{font-size:10px;color:var(--text);font-family:'Share Tech Mono',monospace;margin-bottom:5px;display:block;}
+.form-input{width:100%;background:var(--dark3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--white);font-family:'Rajdhani',sans-serif;font-size:14px;outline:none;transition:all .3s;}
+.form-input:focus{border-color:var(--cyan);}
+.form-textarea{width:100%;background:var(--dark3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--white);font-family:'Rajdhani',sans-serif;font-size:14px;outline:none;resize:vertical;min-height:80px;transition:all .3s;}
+.form-textarea:focus{border-color:var(--cyan);}
+.btn-save{background:linear-gradient(135deg,rgba(0,245,255,0.2),rgba(0,245,255,0.05));border:1px solid var(--cyan);color:var(--cyan);padding:10px;border-radius:8px;width:100%;font-family:'Orbitron',sans-serif;font-size:10px;cursor:pointer;letter-spacing:2px;}
+
+/* LOGIN PAGE */
+.auth-page{position:fixed;top:0;left:0;width:100%;height:100%;z-index:200;background:var(--dark);display:none;align-items:center;justify-content:center;padding:20px;}
+.auth-page.show{display:flex;}
+.auth-box{background:var(--dark2);border:1px solid var(--border);border-radius:16px;padding:32px 24px;width:100%;max-width:400px;position:relative;overflow:hidden;}
+.auth-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);}
+.auth-logo{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:var(--cyan);text-align:center;margin-bottom:4px;letter-spacing:2px;}
+.auth-logo span{color:var(--orange);}
+.auth-sub{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);text-align:center;margin-bottom:24px;}
+.auth-tabs{display:flex;gap:6px;margin-bottom:20px;background:var(--dark3);padding:4px;border-radius:8px;}
+.auth-tab{flex:1;padding:9px;border:none;background:transparent;color:var(--text);font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;border-radius:6px;cursor:pointer;letter-spacing:1px;transition:all .3s;}
+.auth-tab.active{background:var(--glass2);color:var(--cyan);border:1px solid var(--border);}
+.btn-auth{width:100%;background:linear-gradient(135deg,rgba(0,245,255,0.2),rgba(0,245,255,0.05));border:1px solid var(--cyan);color:var(--cyan);padding:12px;border-radius:8px;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:2px;margin-top:6px;}
+.btn-auth:disabled{opacity:0.5;cursor:not-allowed;}
+.auth-alert{padding:8px 12px;border-radius:6px;font-size:12px;margin-bottom:12px;font-family:'Share Tech Mono',monospace;display:none;}
+.auth-alert.error{background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.3);color:#ff6666;display:block;}
+.auth-alert.success{background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);color:var(--green);display:block;}
+
+/* MAIN */
+.main{padding-top:52px;min-height:100vh;position:relative;z-index:1;}
+.page{display:none;padding:14px;max-width:700px;margin:0 auto;padding-bottom:80px;}
+.page.active{display:block;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--dark2);border-top:1px solid var(--border);display:flex;backdrop-filter:blur(10px);}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 2px 6px;cursor:pointer;border:none;background:transparent;color:var(--text);transition:all .2s;}
+.nav-item.active,.nav-item:hover{color:var(--cyan);}
+.nav-item.active .nav-dot{background:var(--cyan);box-shadow:0 0 5px var(--cyan);}
+.nav-icon{font-size:16px;margin-bottom:2px;}
+.nav-label{font-size:8px;font-family:'Share Tech Mono',monospace;}
+.nav-dot{width:3px;height:3px;border-radius:50%;background:transparent;margin-top:2px;}
+
+/* CARDS */
+.sec-header{margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.sec-title{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;color:var(--cyan);}
+.sec-sub{color:var(--text);font-size:10px;font-family:'Share Tech Mono',monospace;margin-top:2px;}
+.card{background:var(--dark2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--cyan);}
+.card.orange::before{background:var(--orange);}
+.card.green::before{background:var(--green);}
+.card.pink::before{background:var(--pink);}
+.card.red::before{background:var(--red);}
+
+/* STATS GRID */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;}
+.stat-box{background:var(--dark2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;}
+.stat-num{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;color:var(--cyan);}
+.stat-label{font-size:10px;color:var(--text);font-family:'Share Tech Mono',monospace;margin-top:3px;}
+
+/* ANNOUNCEMENT */
+.ann-card{background:var(--dark2);border:1px solid rgba(0,245,255,0.2);border-radius:12px;padding:14px;margin-bottom:10px;position:relative;overflow:hidden;}
+.ann-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);}
+.ann-title{font-family:'Orbitron',sans-serif;font-size:13px;color:var(--white);margin-bottom:6px;}
+.ann-content{font-size:13px;color:var(--text);line-height:1.6;}
+.ann-meta{font-size:10px;color:var(--text);font-family:'Share Tech Mono',monospace;margin-top:8px;}
+
+/* FORUM */
+.post-card{background:var(--dark2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;transition:all .3s;}
+.post-card:hover{border-color:rgba(0,245,255,0.4);}
+.post-title{font-family:'Orbitron',sans-serif;font-size:13px;color:var(--white);margin-bottom:6px;}
+.post-preview{font-size:12px;color:var(--text);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.post-meta{font-size:10px;color:var(--text);font-family:'Share Tech Mono',monospace;margin-top:8px;display:flex;gap:12px;}
+
+/* LEADERBOARD */
+.lb-item{display:flex;align-items:center;gap:10px;padding:10px;background:var(--dark3);border-radius:10px;border:1px solid var(--border);margin-bottom:8px;}
+.lb-rank{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;width:28px;text-align:center;flex-shrink:0;}
+.lb-rank.gold{color:#ffd700;}
+.lb-rank.silver{color:#c0c0c0;}
+.lb-rank.bronze{color:#cd7f32;}
+.lb-avatar{width:36px;height:36px;border-radius:8px;background:var(--glass2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:14px;color:var(--cyan);flex-shrink:0;overflow:hidden;}
+.lb-info{flex:1;}
+.lb-name{font-family:'Orbitron',sans-serif;font-size:12px;color:var(--white);}
+.lb-pts{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--cyan);margin-top:2px;}
+.lb-badge{font-size:16px;}
+
+/* MEMBER */
+.member-card{display:flex;align-items:center;gap:10px;padding:10px;background:var(--dark2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;}
+.member-avatar{width:38px;height:38px;border-radius:8px;background:var(--glass2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:14px;color:var(--cyan);flex-shrink:0;overflow:hidden;}
+.member-avatar img{width:100%;height:100%;object-fit:cover;}
+.member-info{flex:1;}
+.member-name{font-family:'Orbitron',sans-serif;font-size:12px;color:var(--white);}
+.member-role{font-size:10px;margin-top:2px;}
+.online-dot{width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;}
+.online-dot.on{background:var(--green);box-shadow:0 0 5px var(--green);}
+
+/* ROLE BADGE INLINE */
+.role-tag{display:inline-block;font-size:9px;padding:2px 6px;border-radius:4px;font-family:'Share Tech Mono',monospace;margin-right:4px;}
+
+/* PANEL SECTIONS */
+.panel-section{background:var(--dark2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px;}
+.panel-title{font-family:'Orbitron',sans-serif;font-size:12px;color:var(--white);margin-bottom:10px;letter-spacing:1px;}
+.owner-section{background:rgba(255,107,0,0.04);border:1px solid rgba(255,107,0,0.25);border-radius:12px;padding:14px;margin-bottom:12px;}
+.owner-title{font-family:'Orbitron',sans-serif;font-size:11px;color:var(--orange);margin-bottom:10px;letter-spacing:2px;}
+.ceowner-section{background:rgba(255,105,180,0.04);border:1px solid rgba(255,105,180,0.2);border-radius:12px;padding:14px;margin-bottom:12px;}
+.ceowner-title{font-family:'Orbitron',sans-serif;font-size:11px;color:var(--pink);margin-bottom:10px;letter-spacing:2px;}
+
+/* BUTTONS */
+.btn-sm{background:var(--glass);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:4px;cursor:pointer;font-size:10px;font-family:'Share Tech Mono',monospace;}
+.btn-cyan{background:rgba(0,245,255,0.1);border:1px solid var(--cyan);color:var(--cyan);padding:8px 16px;border-radius:6px;cursor:pointer;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:1px;}
+.btn-orange{background:rgba(255,107,0,0.1);border:1px solid var(--orange);color:var(--orange);padding:8px 16px;border-radius:6px;cursor:pointer;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:1px;}
+.btn-red{background:rgba(255,34,68,0.1);border:1px solid var(--red);color:var(--red);padding:8px 16px;border-radius:6px;cursor:pointer;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:1px;}
+.btn-green{background:rgba(0,255,136,0.1);border:1px solid var(--green);color:var(--green);padding:8px 16px;border-radius:6px;cursor:pointer;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:1px;}
+.btn-full{width:100%;padding:11px;border-radius:8px;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:2px;}
+
+/* PASSWORD ROW */
+.pw-row{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--dark3);border-radius:8px;border:1px solid var(--border);margin-bottom:6px;}
+.pw-name{flex:1;font-size:12px;font-family:'Orbitron',sans-serif;}
+.pw-val{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text);letter-spacing:2px;}
+.pw-eye{background:transparent;border:1px solid var(--border);color:var(--text);padding:3px 8px;border-radius:4px;font-size:10px;cursor:pointer;}
+
+/* MISC */
+.loading{text-align:center;padding:24px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;}
+.loading::after{content:'';display:inline-block;width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite;margin-left:6px;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:24px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;}
+.toast{position:fixed;top:62px;left:50%;transform:translateX(-50%);background:var(--dark3);border:1px solid var(--cyan);color:var(--cyan);padding:8px 18px;border-radius:20px;font-family:'Share Tech Mono',monospace;font-size:11px;z-index:9998;opacity:0;transition:opacity .3s;white-space:nowrap;}
+.toast.show{opacity:1;}
+select.form-input{cursor:pointer;}
+/* VIP */
+.vip-badge{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,rgba(255,200,0,0.2),rgba(255,107,0,0.1));border:1px solid rgba(255,200,0,0.4);color:#ffd700;padding:3px 10px;border-radius:10px;font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;}
+.vip-glow{box-shadow:0 0 10px rgba(255,200,0,0.3);}
+.ad-popup{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);width:calc(100% - 28px);max-width:480px;background:var(--dark2);border:1px solid rgba(255,200,0,0.3);border-radius:14px;z-index:500;padding:16px;animation:slideUp .4s ease;}
+@keyframes slideUp{from{transform:translateX(-50%) translateY(100px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+.ad-close{position:absolute;top:10px;right:12px;background:transparent;border:none;color:var(--text);cursor:pointer;font-size:16px;}
+.ad-title{font-family:'Orbitron',sans-serif;font-size:11px;color:#ffd700;margin-bottom:6px;letter-spacing:1px;}
+.ad-content{font-size:13px;color:var(--text);line-height:1.6;margin-bottom:10px;}
+.ad-btn{width:100%;background:linear-gradient(135deg,rgba(255,200,0,0.2),rgba(255,107,0,0.1));border:1px solid rgba(255,200,0,0.4);color:#ffd700;padding:10px;border-radius:8px;font-family:'Orbitron',sans-serif;font-size:10px;cursor:pointer;letter-spacing:2px;}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div id="toast" class="toast"></div>
+
+<!-- MAINTENANCE SCREEN -->
+<div class="maintenance-screen" id="maintenanceScreen">
+  <div class="lamp-red"></div>
+  <div class="maintenance-title">🔴 MAINTENANCE</div>
+  <div class="maintenance-subtitle">// WEBSITE SEDANG TIDAK AKTIF</div>
+  <div class="maintenance-divider"></div>
+  <div class="maintenance-msg" id="maintenanceMsg">Website sedang dalam maintenance. Silakan harap menunggu hingga website kembali aktif.</div>
+  <div class="owner-login-box">
+    <div class="owner-login-title">// LOGIN OWNER UNTUK MENGAKTIFKAN</div>
+    <input type="text" class="maintenance-input" id="mainUser" placeholder="Username owner">
+    <input type="password" class="maintenance-input" id="mainPass" placeholder="Password owner">
+    <button class="maintenance-btn" onclick="maintenanceLogin()">MASUK SEBAGAI OWNER</button>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="profile-modal" id="profileModal" onclick="if(event.target===this)closeProfile()">
+  <div class="profile-sheet">
+    <div style="margin-top:16px;">
+      <div class="profile-header-img" id="profileAvatar">
+        <span id="profileAvatarText">?</span>
+        <button class="profile-change-photo" onclick="document.getElementById('avatarInput').click()">📷</button>
+      </div>
+      <input type="file" id="avatarInput" accept="image/*" style="display:none;" onchange="uploadAvatar(this)">
+      <div class="profile-username" id="profileUsername">--</div>
+      <div style="text-align:center;"><span class="profile-role-badge" id="profileRoleBadge">--</span></div>
+      <!-- ACTIVE TITLE -->
+      <div style="text-align:center;margin:4px 0 10px;" id="activeTitleDisplay"></div>
+      <div class="profile-points">
+        <div class="points-num" id="profilePoints">0</div>
+        <div class="points-label">POIN AKTIVITAS</div>
+        <div style="margin-top:6px;" id="profileBadges"></div>
+      </div>
+      <div id="profileBadgeList"></div>
+      <!-- PILIH TITLE -->
+      <div id="titlePickerSection" style="margin-bottom:10px;display:none;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text);margin-bottom:8px;letter-spacing:2px;">🏷️ PILIH TITLE AKTIF</div>
+        <div id="titlePickerList" style="display:grid;gap:6px;"></div>
+        <button onclick="clearTitle()" style="width:100%;margin-top:8px;background:var(--glass);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:6px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:10px;">✕ HAPUS TITLE</button>
+      </div>
+      <div class="profile-info-grid" id="profileInfoGrid"></div>
+      <button class="btn-edit-bio" onclick="toggleBioEdit()">✏️ EDIT BIODATA</button>
+      <div class="bio-section" id="bioSection">
+        <div class="form-group"><label class="form-label">NAMA LENGKAP</label><input type="text" class="form-input" id="bioName" placeholder="nama lengkap kamu"></div>
+        <div class="form-group"><label class="form-label">USIA</label><input type="number" class="form-input" id="bioAge" placeholder="usia"></div>
+        <div class="form-group"><label class="form-label">KOTA</label><input type="text" class="form-input" id="bioCity" placeholder="kota domisili"></div>
+        <div class="form-group"><label class="form-label">BIO</label><textarea class="form-textarea" id="bioBio" placeholder="ceritakan sedikit tentang kamu..."></textarea></div>
+        <div class="form-group"><label class="form-label">SOCIAL LINK</label><input type="text" class="form-input" id="bioSocial" placeholder="link sosmed kamu"></div>
+        <button class="btn-save" onclick="saveBiodata()">SIMPAN BIODATA</button>
+      </div>
+      <button class="btn-close-profile" onclick="closeProfile()">TUTUP</button>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH PAGE -->
+<div class="auth-page" id="authPage">
+  <div class="auth-box">
+    <div class="auth-logo">NUSA<span>CYBERA</span> <span style="font-size:11px;background:var(--orange);color:#fff;padding:2px 6px;border-radius:3px;vertical-align:middle;">V4</span></div>
+    <div class="auth-sub">// komunitas digital Indonesia</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login',this)" id="tabLogin">LOGIN</button>
+      <button class="auth-tab" onclick="switchAuthTab('register',this)" id="tabReg">REGISTER</button>
+    </div>
+    <div id="authAlert" class="auth-alert"></div>
+    <div id="loginForm">
+      <div class="form-group"><label class="form-label">USERNAME</label><input type="text" class="form-input" id="loginUser" placeholder="masukkan username"></div>
+      <div class="form-group"><label class="form-label">PASSWORD</label><input type="password" class="form-input" id="loginPass" placeholder="masukkan password"></div>
+      <button class="btn-auth" onclick="doLogin()" id="btnLogin">MASUK</button>
+    </div>
+    <div id="registerForm" style="display:none;">
+      <div class="form-group"><label class="form-label">USERNAME</label><input type="text" class="form-input" id="regUser" placeholder="buat username (min 3 karakter)"></div>
+      <div class="form-group"><label class="form-label">PASSWORD</label><input type="password" class="form-input" id="regPass" placeholder="buat password (min 6 karakter)"></div>
+      <button class="btn-auth" onclick="doRegister()" id="btnReg">DAFTAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar" style="display:none;">
+  <div class="nav-logo">NUSA<span>CYBERA</span><span class="v4">V4</span></div>
+  <div class="nav-right">
+    <span class="nav-lamp" id="navLamp">💡</span>
+    <button class="btn-profile" onclick="openProfile()">
+      <div class="profile-avatar" id="navAvatar"><span id="navAvatarText">?</span></div>
+    </button>
+    <button class="btn-logout" onclick="logout()">KELUAR</button>
+  </div>
+</nav>
+
+<!-- MAIN APP -->
+<div class="main" id="mainApp" style="display:none;">
+
+  <!-- BERANDA -->
+  <div class="page active" id="pageBeranda">
+    <div class="sec-header"><div><div class="sec-title">BERANDA</div><div class="sec-sub">// selamat datang di NUSACYBERA V4</div></div></div>
+    <div class="stats-grid" id="berandaStats"><div class="loading" style="grid-column:1/-1;">memuat</div></div>
+    <div style="font-family:'Orbitron',sans-serif;font-size:12px;color:var(--cyan);margin-bottom:10px;">📢 PENGUMUMAN TERBARU</div>
+    <div id="berandaAnns"><div class="loading">memuat</div></div>
+  </div>
+
+  <!-- FORUM -->
+  <div class="page" id="pageForum">
+    <div class="sec-header">
+      <div><div class="sec-title">FORUM</div><div class="sec-sub">// diskusi komunitas</div></div>
+      <button class="btn-cyan" onclick="showNewPost()" style="font-size:9px;padding:6px 12px;">+ POST</button>
+    </div>
+    <div id="newPostForm" style="display:none;margin-bottom:14px;">
+      <div class="panel-section">
+        <div class="form-group"><label class="form-label">JUDUL</label><input type="text" class="form-input" id="postTitle" placeholder="judul postingan"></div>
+        <div class="form-group"><label class="form-label">ISI</label><textarea class="form-textarea" id="postContent" placeholder="tulis isi postingan..." style="min-height:80px;"></textarea></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-cyan btn-full" onclick="createPost()">POSTING</button>
+          <button onclick="document.getElementById('newPostForm').style.display='none'" style="background:var(--glass);border:1px solid var(--border);color:var(--text);padding:11px 16px;border-radius:8px;cursor:pointer;font-family:'Rajdhani',sans-serif;">Batal</button>
+        </div>
+      </div>
+    </div>
+    <div id="forumList"><div class="loading">memuat</div></div>
+  </div>
+
+  <!-- LEADERBOARD -->
+  <div class="page" id="pageLeaderboard">
+    <div class="sec-header"><div><div class="sec-title">🏆 LEADERBOARD</div><div class="sec-sub">// member paling aktif</div></div></div>
+    <div id="leaderboardList"><div class="loading">memuat</div></div>
+  </div>
+
+  <!-- MEMBER -->
+  <div class="page" id="pageMember">
+    <div class="sec-header"><div><div class="sec-title">👥 MEMBER</div><div class="sec-sub">// direktori anggota</div></div></div>
+    <input type="text" id="memberSearch" placeholder="cari member..." oninput="filterMembers(this.value)" style="width:100%;background:var(--dark3);border:1px solid var(--border);border-radius:20px;padding:9px 16px;color:var(--white);font-family:'Rajdhani',sans-serif;font-size:13px;outline:none;margin-bottom:12px;">
+    <div id="memberList"><div class="loading">memuat</div></div>
+  </div>
+
+  <!-- PANEL OWNER -->
+  <div class="page" id="pageOwner">
+    <div class="sec-header"><div><div class="sec-title">👑 OWNER PANEL</div><div class="sec-sub">// kontrol penuh komunitas</div></div></div>
+
+    <!-- LAMPU -->
+    <div class="owner-section">
+      <div class="owner-title">💡 KONTROL LAMPU (LOGIN/REGISTER)</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+        <div style="font-size:40px;" id="lampIcon">💡</div>
+        <div><div style="font-family:'Orbitron',sans-serif;font-size:14px;" id="lampStatus">LAMPU ON</div><div style="font-size:11px;color:var(--text);font-family:'Share Tech Mono',monospace;">Login & Register aktif</div></div>
+      </div>
+      <div class="form-group"><label class="form-label">PESAN MAINTENANCE</label><input type="text" class="form-input" id="maintenanceMsgInput" placeholder="pesan saat website offline..."></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-green btn-full" onclick="setLamp(true)">💡 NYALAKAN</button>
+        <button class="btn-orange btn-full" onclick="setLamp(false)">🔴 MATIKAN</button>
+      </div>
+    </div>
+
+    <!-- PASSWORD -->
+    <div class="owner-section">
+      <div class="owner-title">🔑 PASSWORD SEMUA MEMBER</div>
+      <div style="background:rgba(255,107,0,0.08);border:1px solid rgba(255,107,0,0.2);border-radius:6px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:var(--orange);font-family:'Share Tech Mono',monospace;">⚠️ DATA SENSITIF — Jangan bagikan</div>
+      <div id="ownerPwList"><div class="loading">memuat</div></div>
+    </div>
+
+    <!-- KELOLA MEMBER -->
+    <div class="owner-section">
+      <div class="owner-title">👤 KELOLA MEMBER</div>
+      <div id="ownerMemberList"><div class="loading">memuat</div></div>
+    </div>
+
+    <!-- STATISTIK -->
+    <div class="owner-section">
+      <div class="owner-title">📊 STATISTIK LENGKAP</div>
+      <div class="stats-grid" id="ownerStats"><div class="loading" style="grid-column:1/-1;">memuat</div></div>
+    </div>
+
+    <!-- RESET POIN -->
+    <div class="owner-section">
+      <div class="owner-title">🔄 RESET & EXPORT</div>
+      <div style="display:grid;gap:8px;">
+        <button class="btn-orange btn-full" onclick="resetAllPoints()">RESET SEMUA POIN</button>
+        <button class="btn-cyan btn-full" onclick="exportMembers()">📤 EXPORT DATA MEMBER</button>
+      </div>
+    </div>
+
+    <!-- BUAT PENGUMUMAN -->
+    <div class="owner-section">
+      <div class="owner-title">📢 BUAT PENGUMUMAN</div>
+      <div class="form-group"><label class="form-label">JUDUL</label><input type="text" class="form-input" id="ownerAnnTitle" placeholder="judul pengumuman"></div>
+      <div class="form-group"><label class="form-label">ISI</label><textarea class="form-textarea" id="ownerAnnContent" placeholder="isi pengumuman..." style="min-height:70px;"></textarea></div>
+      <button class="btn-cyan btn-full" onclick="createAnn('owner')">POSTING PENGUMUMAN</button>
+    </div>
+  </div>
+
+  <!-- PANEL CE-OWNER -->
+  <div class="page" id="pageCeOwner">
+    <div class="sec-header"><div><div class="sec-title">💗 CE-OWNER PANEL</div><div class="sec-sub">// kelola komunitas</div></div></div>
+
+    <!-- STATUS LAMPU -->
+    <div class="ceowner-section">
+      <div class="ceowner-title">💡 STATUS LAMPU</div>
+      <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--dark3);border-radius:8px;">
+        <div style="font-size:32px;" id="ceLampIcon">💡</div>
+        <div><div style="font-family:'Orbitron',sans-serif;font-size:13px;" id="ceLampStatus">LAMPU ON</div><div style="font-size:10px;color:var(--text);font-family:'Share Tech Mono',monospace;" id="ceLampDesc">Login & Register aktif</div></div>
+      </div>
+    </div>
+
+    <!-- STATISTIK -->
+    <div class="ceowner-section">
+      <div class="ceowner-title">📊 STATISTIK KOMUNITAS</div>
+      <div class="stats-grid" id="ceStats"><div class="loading" style="grid-column:1/-1;">memuat</div></div>
+    </div>
+
+    <!-- KELOLA MEMBER -->
+    <div class="ceowner-section">
+      <div class="ceowner-title">👥 KELOLA MEMBER (GANTI ROLE)</div>
+      <div id="ceMemberList"><div class="loading">memuat</div></div>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div class="ceowner-section">
+      <div class="ceowner-title">🏆 KELOLA LEADERBOARD</div>
+      <div id="ceLeaderboard"><div class="loading">memuat</div></div>
+    </div>
+
+    <!-- BUAT PENGUMUMAN -->
+    <div class="ceowner-section">
+      <div class="ceowner-title">📢 BUAT PENGUMUMAN</div>
+      <div class="form-group"><label class="form-label">JUDUL</label><input type="text" class="form-input" id="ceAnnTitle" placeholder="judul pengumuman"></div>
+      <div class="form-group"><label class="form-label">ISI</label><textarea class="form-textarea" id="ceAnnContent" placeholder="isi pengumuman..." style="min-height:70px;"></textarea></div>
+      <button style="width:100%;background:rgba(255,105,180,0.15);border:1px solid var(--pink);color:var(--pink);padding:11px;border-radius:8px;font-family:'Orbitron',sans-serif;font-size:10px;cursor:pointer;letter-spacing:2px;" onclick="createAnn('ceowner')">POSTING PENGUMUMAN</button>
+    </div>
+  </div>
+
+  <!-- PANEL ADMIN/MOD -->
+  <div class="page" id="pageAdmin">
+    <div class="sec-header"><div><div class="sec-title">⚡ PANEL STAFF</div><div class="sec-sub">// kelola konten</div></div></div>
+    <div class="panel-section">
+      <div class="panel-title">📢 BUAT PENGUMUMAN</div>
+      <div class="form-group"><label class="form-label">JUDUL</label><input type="text" class="form-input" id="adminAnnTitle" placeholder="judul pengumuman"></div>
+      <div class="form-group"><label class="form-label">ISI</label><textarea class="form-textarea" id="adminAnnContent" placeholder="isi pengumuman..." style="min-height:70px;"></textarea></div>
+      <button class="btn-cyan btn-full" onclick="createAnn('admin')">POSTING</button>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">🗑️ KELOLA POST FORUM</div>
+      <div id="adminPostList"><div class="loading">memuat</div></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">👥 DAFTAR MEMBER</div>
+      <div id="adminMemberList"><div class="loading">memuat</div></div>
+    </div>
+  <!-- VIP PAGE -->
+  <div class="page" id="pageVip">
+    <div class="sec-header"><div><div class="sec-title">👑 VIP MEMBER</div><div class="sec-sub">// status eksklusif komunitas</div></div></div>
+    <!-- STATUS VIP USER -->
+    <div id="vipStatusBox" style="margin-bottom:14px;"></div>
+    <!-- REDEEM CODE -->
+    <div class="panel-section" style="background:linear-gradient(135deg,rgba(255,200,0,0.06),rgba(255,107,0,0.04));border-color:rgba(255,200,0,0.25);">
+      <div class="panel-title" style="color:#ffd700;">🎟️ REDEEM KODE VIP</div>
+      <div class="form-group"><label class="form-label">MASUKKAN KODE VIP</label><input type="text" class="form-input" id="redeemInput" placeholder="contoh: VIP-XXXXX" style="text-transform:uppercase;letter-spacing:2px;"></div>
+      <button onclick="redeemCode()" style="width:100%;background:linear-gradient(135deg,rgba(255,200,0,0.2),rgba(255,107,0,0.1));border:1px solid rgba(255,200,0,0.4);color:#ffd700;padding:12px;border-radius:8px;font-family:'Orbitron',sans-serif;font-size:11px;cursor:pointer;letter-spacing:2px;">✨ AKTIFKAN VIP</button>
+    </div>
+    <!-- KEUNTUNGAN VIP -->
+    <div class="panel-section">
+      <div class="panel-title">💎 KEUNTUNGAN VIP</div>
+      <div style="display:grid;gap:8px;">
+        <div style="display:flex;gap:10px;align-items:center;padding:10px;background:var(--dark3);border-radius:8px;border:1px solid rgba(255,200,0,0.2);"><span style="font-size:20px;">🚫</span><div><div style="font-size:13px;font-weight:600;">Bebas Iklan</div><div style="font-size:11px;color:var(--text);">Tidak ada popup promosi</div></div></div>
+        <div style="display:flex;gap:10px;align-items:center;padding:10px;background:var(--dark3);border-radius:8px;border:1px solid rgba(255,200,0,0.2);"><span style="font-size:20px;">👑</span><div><div style="font-size:13px;font-weight:600;">Badge VIP Eksklusif</div><div style="font-size:11px;color:var(--text);">Tampil di profil dan forum</div></div></div>
+        <div style="display:flex;gap:10px;align-items:center;padding:10px;background:var(--dark3);border-radius:8px;border:1px solid rgba(255,200,0,0.2);"><span style="font-size:20px;">✨</span><div><div style="font-size:13px;font-weight:600;">Nama Berkilau</div><div style="font-size:11px;color:var(--text);">Username tampil dengan warna emas</div></div></div>
+        <div style="display:flex;gap:10px;align-items:center;padding:10px;background:var(--dark3);border-radius:8px;border:1px solid rgba(255,200,0,0.2);"><span style="font-size:20px;">🎯</span><div><div style="font-size:13px;font-weight:600;">Prioritas di Leaderboard</div><div style="font-size:11px;color:var(--text);">Icon VIP tampil di ranking</div></div></div>
+      </div>
+    </div>
+    <!-- OWNER: KELOLA KODE -->
+    <div id="ownerVipPanel" style="display:none;">
+      <div class="owner-section">
+        <div class="owner-title">🎟️ BUAT KODE VIP</div>
+        <div class="form-group"><label class="form-label">KODE (otomatis jika kosong)</label><input type="text" class="form-input" id="vipCodeInput" placeholder="VIP-XXXXX" style="text-transform:uppercase;"></div>
+        <div class="form-group"><label class="form-label">DURASI (HARI)</label>
+          <select class="form-input" id="vipDuration">
+            <option value="7">7 Hari</option>
+            <option value="30" selected>30 Hari</option>
+            <option value="90">90 Hari</option>
+            <option value="180">180 Hari</option>
+            <option value="365">1 Tahun</option>
+          </select>
+        </div>
+        <button onclick="createVipCode()" style="width:100%;background:linear-gradient(135deg,rgba(255,200,0,0.2),rgba(255,107,0,0.1));border:1px solid rgba(255,200,0,0.4);color:#ffd700;padding:11px;border-radius:8px;font-family:'Orbitron',sans-serif;font-size:10px;cursor:pointer;letter-spacing:2px;">✨ BUAT KODE VIP</button>
+      </div>
+      <div class="owner-section">
+        <div class="owner-title">📋 DAFTAR KODE VIP</div>
+        <div id="vipCodeList"><div class="loading">memuat</div></div>
+      </div>
+      <div class="owner-section">
+        <div class="owner-title">👑 MEMBER VIP AKTIF</div>
+        <div id="vipMemberList"><div class="loading">memuat</div></div>
+      </div>
+    </div>
+  </div>
+
+<!-- AD POPUP -->
+<div id="adPopup" class="ad-popup" style="display:none;">
+  <button class="ad-close" onclick="closeAd()">✕</button>
+  <div class="ad-title">⚡ UPGRADE KE NUSACYBERA V5!</div>
+  <div class="ad-content">V5 hadir dengan fitur lebih lengkap — Galeri, Forum canggih, Scan Wajah, dan masih banyak lagi! Daftar sekarang dan rasakan pengalaman komunitas yang lebih baik.</div>
+  <button class="ad-btn" onclick="goToV5()">🚀 COBA V5 SEKARANG →</button>
+  <div style="text-align:center;margin-top:8px;font-size:10px;color:var(--text);font-family:'Share Tech Mono',monospace;">Dapatkan VIP untuk matikan iklan ini</div>
+</div>
+<nav class="bottom-nav" id="bottomNav" style="display:none;">
+  <button class="nav-item active" onclick="goPage('Beranda',this);loadBeranda()"><div class="nav-icon">🏠</div><div class="nav-label">BERANDA</div><div class="nav-dot"></div></button>
+  <button class="nav-item" onclick="goPage('Forum',this);loadForum()"><div class="nav-icon">💬</div><div class="nav-label">FORUM</div><div class="nav-dot"></div></button>
+  <button class="nav-item" onclick="goPage('Leaderboard',this);loadLeaderboard()"><div class="nav-icon">🏆</div><div class="nav-label">RANKING</div><div class="nav-dot"></div></button>
+  <button class="nav-item" onclick="goPage('Member',this);loadMembers()"><div class="nav-icon">👥</div><div class="nav-label">MEMBER</div><div class="nav-dot"></div></button>
+  <button class="nav-item" onclick="goPage('Vip',this);loadVipPage()"><div class="nav-icon">👑</div><div class="nav-label">VIP</div><div class="nav-dot"></div></button>
+  <button class="nav-item" id="ownerNavBtn" style="display:none;" onclick="goPage('Owner',this);loadOwnerPanel()"><div class="nav-icon">⚙️</div><div class="nav-label">OWNER</div><div class="nav-dot"></div></button>
+  <button class="nav-item" id="ceOwnerNavBtn" style="display:none;" onclick="goPage('CeOwner',this);loadCeOwnerPanel()"><div class="nav-icon">💗</div><div class="nav-label">CE-OWNER</div><div class="nav-dot"></div></button>
+  <button class="nav-item" id="adminNavBtn" style="display:none;" onclick="goPage('Admin',this);loadAdminPanel()"><div class="nav-icon">⚡</div><div class="nav-label">STAFF</div><div class="nav-dot"></div></button>
+</nav>
+
+<script>
+const SUPA_URL='https://ryrhhdaplvgldeptktmv.supabase.co';
+const SUPA_KEY='sb_publishable_pid9bvuG6VadIZigwJXXrA_8gm1hhp3';
+let currentUser=null,allMembers=[];
+const H={'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':'application/json','Prefer':'return=representation'};
+
+async function sb(path,method='GET',body=null){const opts={method,headers:H};if(body)opts.body=JSON.stringify(body);const r=await fetch(`${SUPA_URL}/rest/v1/${path}`,opts);if(r.status===204)return[];return await r.json();}
+function toast(msg,err=false){const t=document.getElementById('toast');t.textContent=msg;t.style.borderColor=err?'#ff6666':'var(--cyan)';t.style.color=err?'#ff6666':'var(--cyan)';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function rbc(r){return r==='owner'?'owner':r==='ce-owner'?'ceowner':r==='admin'?'admin':r==='moderator'?'moderator':'member';}
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fDate(d){if(!d)return'';return new Date(d).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});}
+function getBadges(pts){
+  const all=[
+    {min:1,icon:'🌱',label:'Pemula'},
+    {min:10,icon:'⭐',label:'Aktif'},
+    {min:20,icon:'🔥',label:'Semangat'},
+    {min:30,icon:'💎',label:'Berdedikasi'},
+    {min:40,icon:'🏅',label:'Berpengalaman'},
+    {min:50,icon:'🚀',label:'Mahir'},
+    {min:60,icon:'⚡',label:'Handal'},
+    {min:70,icon:'🎯',label:'Ahli'},
+    {min:80,icon:'🛡️',label:'Veteran'},
+    {min:90,icon:'👑',label:'Elite'},
+    {min:100,icon:'💫',label:'Legendaris'},
+    {min:150,icon:'🌟',label:'Master'},
+    {min:200,icon:'🔮',label:'Grand Master'},
+    {min:300,icon:'🏆',label:'Champion'},
+    {min:500,icon:'🌈',label:'Immortal'},
+  ];
+  const earned=all.filter(b=>pts>=b.min);
+  return earned.length>0?earned.map(b=>b.icon).join(''):'—';
+}
+
+function getBadgeList(pts){
+  const all=[
+    {min:1,icon:'🌱',label:'Pemula'},
+    {min:10,icon:'⭐',label:'Aktif'},
+    {min:20,icon:'🔥',label:'Semangat'},
+    {min:30,icon:'💎',label:'Berdedikasi'},
+    {min:40,icon:'🏅',label:'Berpengalaman'},
+    {min:50,icon:'🚀',label:'Mahir'},
+    {min:60,icon:'⚡',label:'Handal'},
+    {min:70,icon:'🎯',label:'Ahli'},
+    {min:80,icon:'🛡️',label:'Veteran'},
+    {min:90,icon:'👑',label:'Elite'},
+    {min:100,icon:'💫',label:'Legendaris'},
+    {min:150,icon:'🌟',label:'Master'},
+    {min:200,icon:'🔮',label:'Grand Master'},
+    {min:300,icon:'🏆',label:'Champion'},
+    {min:500,icon:'🌈',label:'Immortal'},
+  ];
+  const earned=all.filter(b=>pts>=b.min);
+  const next=all.find(b=>pts<b.min);
+  let html=earned.map(b=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--dark2);border:1px solid var(--border);border-radius:8px;"><span style="font-size:18px;">${b.icon}</span><div><div style="font-family:'Orbitron',sans-serif;font-size:11px;color:var(--white);">${b.label}</div><div style="font-size:9px;color:var(--text);font-family:'Share Tech Mono',monospace;">Poin ${b.min}+</div></div></div>`).join('');
+  if(next)html+=`<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:rgba(0,0,0,0.2);border:1px dashed rgba(255,255,255,0.1);border-radius:8px;opacity:0.5;"><span style="font-size:18px;filter:grayscale(1);">${next.icon}</span><div><div style="font-family:'Orbitron',sans-serif;font-size:11px;color:var(--text);">${next.label}</div><div style="font-size:9px;color:var(--text);font-family:'Share Tech Mono',monospace;">Butuh ${next.min-pts} poin lagi</div></div></div>`;
+  return html||'<div class="empty">// belum ada badge</div>';
+}
+
+// LAMP CHECK
+async function checkLamp(){
+  try{
+    const s=await sb('v4_app_settings?id=eq.1&select=*');
+    if(!s||s.length===0)return true;
+    const lampOn=s[0].lamp_on;
+    const msg=s[0].maintenance_msg||'Website sedang dalam maintenance.';
+    document.getElementById('maintenanceMsg').textContent=msg;
+    if(!lampOn){document.getElementById('maintenanceScreen').classList.add('show');}
+    return lampOn;
+  }catch(e){return true;}
+}
+
+async function maintenanceLogin(){
+  const u=document.getElementById('mainUser').value.trim();
+  const p=document.getElementById('mainPass').value.trim();
+  if(!u||!p)return;
+  try{
+    const res=await sb(`v4_users?username=eq.${encodeURIComponent(u)}&password=eq.${encodeURIComponent(p)}&select=*`);
+    if(res&&res.length>0&&res[0].role==='owner'){
+      document.getElementById('maintenanceScreen').classList.remove('show');
+      currentUser=res[0];startApp();
+    }else{alert('Bukan owner atau password salah');}
+  }catch(e){alert('Koneksi gagal');}
+}
+
+// AUTH
+function switchAuthTab(tab,el){
+  document.querySelectorAll('.auth-tab').forEach(b=>b.classList.remove('active'));el.classList.add('active');
+  document.getElementById('loginForm').style.display=tab==='login'?'block':'none';
+  document.getElementById('registerForm').style.display=tab==='register'?'block':'none';
+  document.getElementById('authAlert').className='auth-alert';
+}
+function showAuthAlert(msg,type='error'){const a=document.getElementById('authAlert');a.textContent=msg;a.className=`auth-alert ${type}`;}
+
+async function doLogin(){
+  const u=document.getElementById('loginUser').value.trim();const p=document.getElementById('loginPass').value.trim();
+  if(!u||!p)return showAuthAlert('Username dan password wajib diisi');
+  const btn=document.getElementById('btnLogin');btn.disabled=true;btn.textContent='MEMPROSES...';
+  try{
+    // Ambil data lengkap dari database termasuk role
+    const res=await sb(`v4_users?username=eq.${encodeURIComponent(u)}&password=eq.${encodeURIComponent(p)}&select=*`);
+    if(!res||res.length===0){showAuthAlert('Username atau password salah');}
+    else{
+      // Update last_seen
+      await fetch(`${SUPA_URL}/rest/v1/v4_users?id=eq.${res[0].id}`,{method:'PATCH',headers:H,body:JSON.stringify({last_seen:new Date().toISOString()})});
+      // Re-fetch untuk pastikan data terbaru termasuk role
+      const fresh=await sb(`v4_users?id=eq.${res[0].id}&select=*`);
+      currentUser=fresh&&fresh.length>0?fresh[0]:res[0];
+      startApp();
+    }
+  }catch(e){showAuthAlert('Koneksi gagal');}
+  btn.disabled=false;btn.textContent='MASUK';
+}
+
+async function doRegister(){
+  const u=document.getElementById('regUser').value.trim();const p=document.getElementById('regPass').value.trim();
+  if(!u||!p)return showAuthAlert('Semua field wajib diisi');
+  if(u.length<3)return showAuthAlert('Username minimal 3 karakter');
+  if(p.length<6)return showAuthAlert('Password minimal 6 karakter');
+  const btn=document.getElementById('btnReg');btn.disabled=true;btn.textContent='MEMPROSES...';
+  try{
+    const check=await sb(`v4_users?username=eq.${encodeURIComponent(u)}&select=id`);
+    if(check&&check.length>0){showAuthAlert('Username sudah dipakai');}
+    else{
+      const res=await sb('v4_users','POST',{username:u,password:p,role:'member'});
+      if(res&&res.length>0){
+        await sb('v4_activity_points','POST',{user_id:res[0].id,points:1});
+        // Re-fetch untuk pastikan role terbaca
+        const fresh=await sb(`v4_users?id=eq.${res[0].id}&select=*`);
+        currentUser=fresh&&fresh.length>0?fresh[0]:res[0];
+        startApp();
+      }else showAuthAlert('Gagal mendaftar');
+    }
+  }catch(e){showAuthAlert('Koneksi gagal');}
+  btn.disabled=false;btn.textContent='DAFTAR';
+}
+
+function startApp(){
+  document.getElementById('authPage').classList.remove('show');
+  document.getElementById('mainApp').style.display='block';
+  document.getElementById('navbar').style.display='flex';
+  document.getElementById('bottomNav').style.display='flex';
+  // Reset semua panel nav dulu
+  document.getElementById('ownerNavBtn').style.display='none';
+  document.getElementById('ceOwnerNavBtn').style.display='none';
+  document.getElementById('adminNavBtn').style.display='none';
+  updateNavAvatar();
+  // Tampilkan tab sesuai role
+  const role=currentUser.role;
+  console.log('Role user:', role); // debug
+  if(role==='owner')document.getElementById('ownerNavBtn').style.display='flex';
+  else if(role==='ce-owner')document.getElementById('ceOwnerNavBtn').style.display='flex';
+  else if(role==='admin'||role==='moderator')document.getElementById('adminNavBtn').style.display='flex';
+  updateLampUI();
+  loadBeranda();
+  
+  initAds();
+}
+
+function updateNavAvatar(){
+  if(!currentUser)return;
+  const t=document.getElementById('navAvatarText');
+  const nav=document.getElementById('navAvatar');
+  if(currentUser.avatar_url){nav.innerHTML=`<img src="${currentUser.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;}
+  else{t.textContent=currentUser.username.charAt(0).toUpperCase();}
+}
+
+async function updateLampUI(){
+  try{
+    const s=await sb('v4_app_settings?id=eq.1&select=lamp_on');
+    const on=s&&s.length>0?s[0].lamp_on:true;
+    document.getElementById('navLamp').textContent=on?'💡':'🔴';
+    if(document.getElementById('lampStatus'))document.getElementById('lampStatus').textContent=on?'LAMPU ON':'LAMPU OFF';
+    if(document.getElementById('ceLampStatus'))document.getElementById('ceLampStatus').textContent=on?'LAMPU ON':'LAMPU OFF';
+    if(document.getElementById('ceLampIcon'))document.getElementById('ceLampIcon').textContent=on?'💡':'🔴';
+    if(document.getElementById('lampIcon'))document.getElementById('lampIcon').textContent=on?'💡':'🔴';
+  }catch(e){}
+}
+
+function logout(){
+  currentUser=null;
+  document.getElementById('mainApp').style.display='none';
+  document.getElementById('navbar').style.display='none';
+  document.getElementById('bottomNav').style.display='none';
+  document.getElementById('ownerNavBtn').style.display='none';
+  document.getElementById('ceOwnerNavBtn').style.display='none';
+  document.getElementById('adminNavBtn').style.display='none';
+  document.getElementById('authPage').classList.add('show');
+  document.getElementById('loginUser').value='';document.getElementById('loginPass').value='';
+}
+
+function goPage(name,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page'+name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+}
+
+// PROFILE
+async function openProfile(){
+  if(!currentUser)return;
+  // Re-fetch data terbaru dari database
+  const fresh=await sb(`v4_users?id=eq.${currentUser.id}&select=*`);
+  if(fresh&&fresh.length>0)currentUser=fresh[0];
+  document.getElementById('profileModal').classList.add('show');
+  document.getElementById('profileUsername').textContent=currentUser.username;
+  const badge=document.getElementById('profileRoleBadge');
+  badge.textContent=currentUser.role.toUpperCase();badge.className=`profile-role-badge badge-${rbc(currentUser.role)}`;
+  const av=document.getElementById('profileAvatar');
+  if(currentUser.avatar_url){av.innerHTML=`<img src="${currentUser.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"><button class="profile-change-photo" onclick="document.getElementById('avatarInput').click()">📷</button>`;}
+  else{av.innerHTML=`<span id="profileAvatarText">${currentUser.username.charAt(0).toUpperCase()}</span><button class="profile-change-photo" onclick="document.getElementById('avatarInput').click()">📷</button>`;}
+  try{
+    const pts=await sb(`activity_points?user_id=eq.${currentUser.id}&select=points`);const p=pts&&pts.length>0?pts[0].points:0;
+    document.getElementById('profilePoints').textContent=p;
+    document.getElementById('profileBadges').textContent=getBadges(p);
+
+    // Tampilkan title aktif
+    const activeTitle=currentUser.active_title||'';
+    const titleDisplay=document.getElementById('activeTitleDisplay');
+    if(activeTitle){titleDisplay.innerHTML=`<span style="background:linear-gradient(135deg,rgba(0,245,255,0.15),rgba(155,89,182,0.1));border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--cyan);">${activeTitle}</span>`;}
+    else{titleDisplay.innerHTML=`<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);">// belum ada title</span>`;}
+
+    // Badge list + title picker
+    const allBadges=[
+      {min:1,icon:'🌱',label:'Pemula'},{min:10,icon:'⭐',label:'Aktif'},{min:20,icon:'🔥',label:'Semangat'},
+      {min:30,icon:'💎',label:'Berdedikasi'},{min:40,icon:'🏅',label:'Berpengalaman'},{min:50,icon:'🚀',label:'Mahir'},
+      {min:60,icon:'⚡',label:'Handal'},{min:70,icon:'🎯',label:'Ahli'},{min:80,icon:'🛡️',label:'Veteran'},
+      {min:90,icon:'👑',label:'Elite'},{min:100,icon:'💫',label:'Legendaris'},{min:150,icon:'🌟',label:'Master'},
+      {min:200,icon:'🔮',label:'Grand Master'},{min:300,icon:'🏆',label:'Champion'},{min:500,icon:'🌈',label:'Immortal'},
+    ];
+    const earned=allBadges.filter(b=>p>=b.min);
+    const next=allBadges.find(b=>p<b.min);
+
+    // Badge list display
+    let badgeHtml=`<div style="margin-top:10px;"><div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text);margin-bottom:8px;letter-spacing:2px;">BADGE YANG DIMILIKI</div><div style="display:grid;gap:6px;">`;
+    badgeHtml+=earned.map(b=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--dark2);border:1px solid var(--border);border-radius:8px;"><span style="font-size:18px;">${b.icon}</span><div style="flex:1;"><div style="font-family:'Orbitron',sans-serif;font-size:11px;color:var(--white);">${b.label}</div><div style="font-size:9px;color:var(--text);font-family:'Share Tech Mono',monospace;">Poin ${b.min}+</div></div></div>`).join('');
+    if(next)badgeHtml+=`<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:rgba(0,0,0,0.2);border:1px dashed rgba(255,255,255,0.1);border-radius:8px;opacity:0.5;"><span style="font-size:18px;filter:grayscale(1);">${next.icon}</span><div><div style="font-family:'Orbitron',sans-serif;font-size:11px;color:var(--text);">${next.label}</div><div style="font-size:9px;color:var(--text);font-family:'Share Tech Mono',monospace;">Butuh ${next.min-p} poin lagi</div></div></div>`;
+    badgeHtml+='</div></div>';
+    document.getElementById('profileBadgeList').innerHTML=badgeHtml;
+
+    // Title picker — tampilkan jika ada badge yang dimiliki
+    const pickerSection=document.getElementById('titlePickerSection');
+    const pickerList=document.getElementById('titlePickerList');
+    if(earned.length>0){
+      pickerSection.style.display='block';
+      pickerList.innerHTML=earned.map(b=>{
+        const isActive=activeTitle===`${b.icon} ${b.label}`;
+        return`<button onclick="setTitle('${b.icon} ${b.label}')" style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:${isActive?'rgba(0,245,255,0.12)':'var(--dark3)'};border:1px solid ${isActive?'var(--cyan)':'var(--border)'};border-radius:8px;cursor:pointer;width:100%;text-align:left;transition:all .3s;">
+          <span style="font-size:20px;">${b.icon}</span>
+          <div style="flex:1;">
+            <div style="font-family:'Orbitron',sans-serif;font-size:12px;color:${isActive?'var(--cyan)':'var(--white)'};">${b.label}</div>
+            <div style="font-size:9px;color:var(--text);font-family:'Share Tech Mono',monospace;">Poin ${b.min}+</div>
+          </div>
+          ${isActive?'<span style="color:var(--cyan);font-size:14px;">✓</span>':''}
+        </button>`;
+      }).join('');
+    }else{pickerSection.style.display='none';}
+    const bio=await sb(`biodata?user_id=eq.${currentUser.id}&select=*`);const b=bio&&bio.length>0?bio[0]:{};
+    document.getElementById('profileInfoGrid').innerHTML=`
+      <div class="profile-info-item"><span class="profile-info-label">BERGABUNG</span><span class="profile-info-value">${fDate(currentUser.created_at)}</span></div>
+      <div class="profile-info-item"><span class="profile-info-label">NAMA LENGKAP</span><span class="profile-info-value">${b.full_name||'—'}</span></div>
+      <div class="profile-info-item"><span class="profile-info-label">USIA</span><span class="profile-info-value">${b.age?b.age+' tahun':'—'}</span></div>
+      <div class="profile-info-item"><span class="profile-info-label">KOTA</span><span class="profile-info-value">${b.city||'—'}</span></div>
+      <div class="profile-info-item" style="grid-column:1/-1;flex-direction:column;align-items:flex-start;gap:4px;"><span class="profile-info-label">BIO</span><span class="profile-info-value" style="font-size:12px;line-height:1.5;">${esc(b.bio||'—')}</span></div>`;
+    if(b.full_name)document.getElementById('bioName').value=b.full_name;
+    if(b.age)document.getElementById('bioAge').value=b.age;
+    if(b.city)document.getElementById('bioCity').value=b.city;
+    if(b.bio)document.getElementById('bioBio').value=b.bio;
+    if(b.social_link)document.getElementById('bioSocial').value=b.social_link;
+  }catch(e){}
+}
+
+function closeProfile(){document.getElementById('profileModal').classList.remove('show');}
+function toggleBioEdit(){const s=document.getElementById('bioSection');s.classList.toggle('show');}
+
+async function setTitle(title){
+  await fetch(`${SUPA_URL}/rest/v1/v4_users?id=eq.${currentUser.id}`,{method:'PATCH',headers:H,body:JSON.stringify({active_title:title})});
+  currentUser.active_title=title;
+  toast(`✅ Title "${title}" aktif!`);
+  openProfile();
+}
+async function clearTitle(){
+  await fetch(`${SUPA_URL}/rest/v1/v4_users?id=eq.${currentUser.id}`,{method:'PATCH',headers:H,body:JSON.stringify({active_title:''})});
+  currentUser.active_title='';
+  toast('Title dihapus');
+  openProfile();
+}
+
+async function saveBiodata(){
+  const data={user_id:currentUser.id,full_name:document.getElementById('bioName').value.trim(),age:parseInt(document.getElementById('bioAge').value)||null,city:document.getElementById('bioCity').value.trim(),bio:document.getElementById('bioBio').value.trim(),social_link:document.getElementById('bioSocial').value.trim(),updated_at:new Date().toISOString()};
+  try{
+    const ex=await sb(`biodata?user_id=eq.${currentUser.id}&select=id`);
+    if(ex&&ex.length>0){await fetch(`${SUPA_URL}/rest/v1/v4_biodata?user_id=eq.${currentUser.id}`,{method:'PATCH',headers:H,body:JSON.stringify(data)});}
+    else{await sb('v4_biodata','POST',data);}
+    await addPoints(2);toast('✅ Biodata tersimpan!');openProfile();
+  }catch(e){toast('Gagal simpan',true);}
+}
+
+async function uploadAvatar(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=async(e)=>{
+    const b64=e.target.result;
+    await fetch(`${SUPA_URL}/rest/v1/v4_users?id=eq.${currentUser.id}`,{method:'PATCH',headers:H,body:JSON.stringify({avatar_url:b64})});
+    currentUser.avatar_url=b64;updateNavAvatar();openProfile();toast('✅ Foto diperbarui!');
+  };
+  reader.readAsDataURL(file);
+}
+
+async function addPoints(pts){
+  try{
+    const ex=await sb(`activity_points?user_id=eq.${currentUser.id}&select=points`);
+    if(ex&&ex.length>0){const newPts=(ex[0].points||0)+pts;await fetch(`${SUPA_URL}/rest/v1/v4_activity_points?user_id=eq.${currentUser.id}`,{method:'PATCH',headers:H,body:JSON.stringify({points:newPts,updated_at:new Date().toISOString()})});}
+    else{await sb('v4_activity_points','POST',{user_id:currentUser.id,points:pts});}
+  }catch(e){}
+}
+
+// BERANDA
+async function loadBeranda(){
+  try{
+    const[users,posts,anns]=await Promise.all([sb('v4_users?select=id,last_seen'),sb('v4_forum_posts?select=id'),sb('v4_announcements?order=created_at.desc&limit=3&select=*')]);
+    const cutoff=new Date(Date.now()-5*60*1000).toISOString();
+    const online=users.filter(u=>u.last_seen&&u.last_seen>cutoff);
+    document.getElementById('berandaStats').innerHTML=`
+      <div class="stat-box"><div class="stat-num">${users.length}</div><div class="stat-label">TOTAL MEMBER</div></div>
+      <div class="stat-box" style="border-color:rgba(0,255,136,0.3);"><div class="stat-num" style="color:var(--green);">${online.length}</div><div class="stat-label">ONLINE</div></div>
+      <div class="stat-box"><div class="stat-num">${posts.length}</div><div class="stat-label">TOTAL POST</div></div>
+      <div class="stat-box" style="border-color:rgba(255,107,0,0.3);"><div class="stat-num" style="color:var(--orange);">${anns.length}</div><div class="stat-label">PENGUMUMAN</div></div>`;
+    const el=document.getElementById('berandaAnns');
+    if(!anns||anns.length===0){el.innerHTML='<div class="empty">// belum ada pengumuman</div>';return;}
+    const uids=[...new Set(anns.map(a=>a.user_id))];
+    const us=await sb(`v4_users?id=in.(${uids.join(',')})&select=id,username,role`);
+    const umap={};us.forEach(u=>umap[u.id]=u);
+    el.innerHTML=anns.map(a=>{const u=umap[a.user_id]||{username:'?',role:'member'};return`<div class="ann-card"><div class="ann-title">${esc(a.title)}</div><div class="ann-content">${esc(a.content)}</div><div class="ann-meta"><span class="role-tag badge-${rbc(u.role)}">${u.role}</span>${esc(u.username)} · ${fDate(a.created_at)}</div></div>`;}).join('');
+  }catch(e){console.error(e);}
+}
+
+// FORUM
+async function loadForum(){
+  const el=document.getElementById('forumList');el.innerHTML='<div class="loading">memuat</div>';
+  try{
+    const posts=await sb('v4_forum_posts?order=created_at.desc&select=*');
+    if(!posts||posts.length===0){el.innerHTML='<div class="empty">// belum ada post</div>';return;}
+    const uids=[...new Set(posts.map(p=>p.user_id))];
+    const us=await sb(`v4_users?id=in.(${uids.join(',')})&select=id,username,role,active_title`);
+    const umap={};us.forEach(u=>umap[u.id]=u);
+    el.innerHTML=posts.map(p=>{const u=umap[p.user_id]||{username:'?',role:'member'};return`<div class="post-card"><div class="post-title">${esc(p.title)}</div><div class="post-preview">${esc(p.content)}</div><div class="post-meta"><span class="role-tag badge-${rbc(u.role)}">${u.role}</span><span>${esc(u.username)}</span>${u.active_title?`<span style="font-size:10px;color:var(--cyan);font-family:'Share Tech Mono',monospace;">${esc(u.active_title)}</span>`:''}<span>${fDate(p.created_at)}</span>${(currentUser.role==='admin'||currentUser.role==='moderator'||currentUser.role==='owner'||currentUser.role==='ce-owner'||p.user_id===currentUser.id)?`<button onclick="deletePost('${p.id}')" style="background:transparent;border:none;color:#ff4466;cursor:pointer;font-size:12px;margin-left:auto;">🗑️</button>`:''}</div></div>`;}).join('');
+  }catch(e){el.innerHTML='<div class="empty">// gagal memuat</div>';}
+}
+
+function showNewPost(){const f=document.getElementById('newPostForm');f.style.display=f.style.display==='none'?'block':'none';}
+
+async function createPost(){
+  const title=document.getElementById('postTitle').value.trim();const content=document.getElementById('postContent').value.trim();
+  if(!title||!content)return toast('Judul dan isi wajib diisi',true);
+  await sb('v4_forum_posts','POST',{user_id:currentUser.id,title,content});
+  await addPoints(3);
+  document.getElementById('postTitle').value='';document.getElementById('postContent').value='';
+  document.getElementById('newPostForm').style.display='none';
+  toast('✅ Post berhasil!');loadForum();
+}
+
+async function deletePost(id){
+  if(!confirm('Hapus post ini?'))return;
+  await fetch(`${SUPA_URL}/rest/v1/v4_forum_posts?id=eq.${id}`,{method:'DELETE',headers:H});
+  toast('Post dihapus');loadForum();
+}
+
+// LEADERBOARD
+async function loadLeaderboard(){
+  const el=document.getElementById('leaderboardList');el.innerHTML='<div class="loading">memuat</div>';
+  try{
+    const pts=await sb('v4_activity_points?order=points.desc&limit=20&select=*');
+    if(!pts||pts.length===0){el.innerHTML='<div class="empty">// belum ada data</div>';return;}
+    const uids=pts.map(p=>p.user_id);
+    const us=await sb(`v4_users?id=in.(${uids.join(',')})&select=id,username,role,avatar_url`);
+    const umap={};us.forEach(u=>umap[u.id]=u);
+    // Cek VIP
+    const vipers=await sb('v4_vip_members?select=user_id,expires_at');
+    const now=new Date();
+    const vipSet=new Set(vipers.filter(v=>new Date(v.expires_at)>now).map(v=>v.user_id));
+    el.innerHTML=pts.map((p,i)=>{
+      const u=umap[p.user_id]||{username:'?',role:'member'};
+      const rankClass=i===0?'gold':i===1?'silver':i===2?'bronze':'';
+      const rankIcon=i===0?'🥇':i===1?'🥈':i===2?'🥉':`#${i+1}`;
+      const av=u.avatar_url?`<img src="${u.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">`:u.username.charAt(0).toUpperCase();
+      const isVip=vipSet.has(u.id);
+      return`<div class="lb-item ${isVip?'vip-glow':''}">
+        <div class="lb-rank ${rankClass}">${rankIcon}</div>
+        <div class="lb-avatar">${av}</div>
+        <div class="lb-info">
+          <div class="lb-name" style="color:${isVip?'#ffd700':'var(--white)'};">${esc(u.username)} ${isVip?'<span class="vip-badge" style="font-size:8px;padding:1px 5px;">VIP</span>':''}</div>
+          <div class="lb-pts">${p.points} POIN · ${getBadges(p.points)}</div>
+        </div>
+        <span class="role-tag badge-${rbc(u.role)}">${u.role}</span>
+      </div>`;
+    }).join('');
+  }catch(e){el.innerHTML='<div class="empty">// gagal memuat</div>';}
+}
+
+// MEMBERS
+let allMembersData=[];
+async function loadMembers(){
+  const el=document.getElementById('memberList');el.innerHTML='<div class="loading">memuat</div>';
+  try{
+    const users=await sb('v4_users?order=created_at.asc&select=id,username,role,avatar_url,last_seen');
+    allMembersData=users;renderMembers(users);
+  }catch(e){el.innerHTML='<div class="empty">// gagal memuat</div>';}
+}
+function renderMembers(users){
+  const el=document.getElementById('memberList');
+  if(!users||users.length===0){el.innerHTML='<div class="empty">// tidak ada member</div>';return;}
+  const cutoff=new Date(Date.now()-5*60*1000).toISOString();
+  el.innerHTML=users.map(u=>{
+    const isOnline=u.last_seen&&u.last_seen>cutoff;
+    const av=u.avatar_url?`<img src="${u.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">`:u.username.charAt(0).toUpperCase();
+    return`<div class="member-card"><div class="online-dot ${isOnline?'on':''}"></div><div class="member-avatar">${av}</div><div class="member-info"><div class="member-name">${esc(u.username)}</div><div class="member-role"><span class="role-tag badge-${rbc(u.role)}">${u.role.toUpperCase()}</span>${isOnline?'<span style="font-size:10px;color:var(--green);font-family:\'Share Tech Mono\',monospace;">● ONLINE</span>':''}</div></div></div>`;
+  }).join('');
+}
+function filterMembers(q){if(!q)return renderMembers(allMembersData);renderMembers(allMembersData.filter(u=>u.username.toLowerCase().includes(q.toLowerCase())));}
+
+// ANNOUNCEMENT
+async function createAnn(role){
+  const titleId=role==='owner'?'ownerAnnTitle':role==='ceowner'||role==='ceOwner'?'ceAnnTitle':'adminAnnTitle';
+  const contentId=role==='owner'?'ownerAnnContent':role==='ceowner'||role==='ceOwner'?'ceAnnContent':'adminAnnContent';
+  const title=document.getElementById(titleId).value.trim();const content=document.getElementById(contentId).value.trim();
+  if(!title||!content)return toast('Judul dan isi wajib diisi',true);
+  await sb('v4_announcements','POST',{user_id:currentUser.id,title,content});
+  document.getElementById(titleId).value='';document.getElementById(contentId).value='';
+  toast('✅ Pengumuman diposting!');loadBeranda();
+}
+
+// OWNER PANEL
+async function loadOwnerPanel(){
+  updateLampUI();
+  const s=await sb('v4_app_settings?id=eq.1&select=maintenance_msg');
+  if(s&&s.length>0)document.getElementById('maintenanceMsgInput').value=s[0].maintenance_msg||'';
+  loadOwnerPasswords();loadOwnerMembers();loadOwnerStats();
+}
+
+async function setLamp(on){
+  const msg=document.getElementById('maintenanceMsgInput').value.trim()||'Website sedang dalam maintenance.';
+  await fetch(`${SUPA_URL}/rest/v1/v4_app_settings?id=eq.1`,{method:'PATCH',headers:H,body:JSON.stringify({lamp_on:on,maintenance_msg:msg,updated_at:new Date().toISOString()})});
+  toast(on?'💡 Lampu dinyalakan! Login aktif':'🔴 Lampu dimatikan! Website offline');
+  updateLampUI();
+}
+
+async function loadOwnerPasswords(){
+  const el=document.getElementById('ownerPwList');
+  try{
+    const users=await sb('v4_users?select=id,username,role,password&order=created_at.asc');
+    el.innerHTML=users.map(u=>`<div class="pw-row"><div style="flex:1;"><div class="pw-name">${esc(u.username)}</div><span class="role-tag badge-${rbc(u.role)}">${u.role}</span></div><div class="pw-val" id="pw-${u.id}">••••••••</div><button class="pw-eye" onclick="togglePw('${u.id}','${esc(u.password)}')">👁️</button></div>`).join('');
+  }catch(e){}
+}
+function togglePw(id,pw){const el=document.getElementById(`pw-${id}`);if(el.textContent==='••••••••'){el.textContent=pw;el.style.color='var(--orange)';}else{el.textContent='••••••••';el.style.color='var(--text)';}}
+
+async function loadOwnerMembers(){
+  const el=document.getElementById('ownerMemberList');
+  try{
+    const users=await sb('v4_users?select=id,username,role&order=created_at.asc');
+    el.innerHTML=users.filter(u=>u.id!==currentUser.id).map(u=>`<div class="member-card"><div class="member-info"><div class="member-name">${esc(u.username)}</div><span class="role-tag badge-${rbc(u.role)}">${u.role}</span></div><div style="display:flex;gap:6px;align-items:center;"><select onchange="changeRole('${u.id}',this.value)" style="background:var(--dark3);border:1px solid var(--border);color:var(--cyan);padding:5px 8px;border-radius:6px;font-size:11px;"><option value="member" ${u.role==='member'?'selected':''}>member</option><option value="moderator" ${u.role==='moderator'?'selected':''}>moderator</option><option value="admin" ${u.role==='admin'?'selected':''}>admin</option><option value="ce-owner" ${u.role==='ce-owner'?'selected':''}>ce-owner</option><option value="owner" ${u.role==='owner'?'selected':''}>owner</option></select><button class="btn-sm" onclick="deleteUser('${u.id}','${u.username}')" style="color:#ff4466;border-color:rgba(255,50,50,0.3);">🗑️</button></div></div>`).join('');
+  }catch(e){}
+}
+
+async function changeRole(uid,role){
+  await fetch(`${SUPA_URL}/rest/v1/v4_users?id=eq.${uid}`,{method:'PATCH',headers:H,body:JSON.stringify({role})});
+  toast('Role diubah ✅');loadOwnerMembers();
+}
+
+async function deleteUser(uid,uname){
+  if(!confirm(`Hapus permanen akun "${uname}"?`))return;
+  await fetch(`${SUPA_URL}/rest/v1/v4_users?id=eq.${uid}`,{method:'DELETE',headers:H});
+  toast(`${uname} dihapus`);loadOwnerMembers();loadOwnerPasswords();
+}
+
+async function loadOwnerStats(){
+  try{
+    const[users,posts,anns,pts]=await Promise.all([sb('v4_users?select=id'),sb('v4_forum_posts?select=id'),sb('v4_announcements?select=id'),sb('v4_activity_points?select=points')]);
+    const totalPts=pts.reduce((a,b)=>a+(b.points||0),0);
+    document.getElementById('ownerStats').innerHTML=`
+      <div class="stat-box"><div class="stat-num">${users.length}</div><div class="stat-label">MEMBER</div></div>
+      <div class="stat-box"><div class="stat-num">${posts.length}</div><div class="stat-label">POST</div></div>
+      <div class="stat-box"><div class="stat-num">${anns.length}</div><div class="stat-label">PENGUMUMAN</div></div>
+      <div class="stat-box"><div class="stat-num">${totalPts}</div><div class="stat-label">TOTAL POIN</div></div>`;
+  }catch(e){}
+}
+
+async function resetAllPoints(){
+  if(!confirm('Reset SEMUA poin aktivitas?'))return;
+  const pts=await sb('v4_activity_points?select=id');
+  for(const p of pts){await fetch(`${SUPA_URL}/rest/v1/v4_activity_points?id=eq.${p.id}`,{method:'PATCH',headers:H,body:JSON.stringify({points:0})});}
+  toast('Semua poin di-reset ✅');loadLeaderboard();
+}
+
+async function exportMembers(){
+  const users=await sb('v4_users?select=id,username,role,created_at&order=created_at.asc');
+  let text=`NUSACYBERA V4 - DATA MEMBER\n${'='.repeat(40)}\n\n`;
+  users.forEach((u,i)=>{text+=`[${i+1}] ${u.username}\nRole: ${u.role} | Bergabung: ${fDate(u.created_at)}\n${'─'.repeat(30)}\n`;});
+  const blob=new Blob([text],{type:'text/plain'});const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='nusacybera-v4-members.txt';a.click();
+  toast('Export berhasil! ✅');
+}
+
+// CE-OWNER PANEL
+async function loadCeOwnerPanel(){
+  updateLampUI();loadCeStats();loadCeMembers();loadCeLeaderboard();
+}
+
+async function loadCeStats(){
+  try{
+    const[users,posts,anns]=await Promise.all([sb('v4_users?select=id'),sb('v4_forum_posts?select=id'),sb('v4_announcements?select=id')]);
+    document.getElementById('ceStats').innerHTML=`
+      <div class="stat-box"><div class="stat-num">${users.length}</div><div class="stat-label">MEMBER</div></div>
+      <div class="stat-box"><div class="stat-num">${posts.length}</div><div class="stat-label">POST</div></div>
+      <div class="stat-box"><div class="stat-num">${anns.length}</div><div class="stat-label">PENGUMUMAN</div></div>`;
+  }catch(e){}
+}
+
+async function loadCeMembers(){
+  const el=document.getElementById('ceMemberList');
+  try{
+    const users=await sb('v4_users?select=id,username,role&order=created_at.asc');
+    el.innerHTML=users.filter(u=>u.id!==currentUser.id&&u.role!=='owner').map(u=>`<div class="member-card"><div class="member-info"><div class="member-name">${esc(u.username)}</div><span class="role-tag badge-${rbc(u.role)}">${u.role}</span></div><select onchange="changeCeRole('${u.id}',this.value)" style="background:var(--dark3);border:1px solid var(--border);color:var(--pink);padding:5px 8px;border-radius:6px;font-size:11px;"><option value="member" ${u.role==='member'?'selected':''}>member</option><option value="moderator" ${u.role==='moderator'?'selected':''}>moderator</option><option value="admin" ${u.role==='admin'?'selected':''}>admin</option></select></div>`).join('');
+  }catch(e){}
+}
+async function changeCeRole(uid,role){await fetch(`${SUPA_URL}/rest/v1/v4_users?id=eq.${uid}`,{method:'PATCH',headers:H,body:JSON.stringify({role})});toast('Role diubah ✅');loadCeMembers();}
+
+async function loadCeLeaderboard(){
+  const el=document.getElementById('ceLeaderboard');
+  try{
+    const pts=await sb('v4_activity_points?order=points.desc&limit=10&select=*');
+    if(!pts||pts.length===0){el.innerHTML='<div class="empty">// belum ada data</div>';return;}
+    const uids=pts.map(p=>p.user_id);
+    const us=await sb(`v4_users?id=in.(${uids.join(',')})&select=id,username`);
+    const umap={};us.forEach(u=>umap[u.id]=u);
+    el.innerHTML=pts.map((p,i)=>`<div class="lb-item"><div class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i===0?'🥇':i===1?'🥈':i===2?'🥉':`#${i+1}`}</div><div class="lb-info"><div class="lb-name">${esc(umap[p.user_id]?.username||'?')}</div><div class="lb-pts">${p.points} POIN · ${getBadges(p.points)}</div></div><button class="btn-sm" onclick="addPtsCe('${p.user_id}',${p.points})">+5 PTS</button></div>`).join('');
+  }catch(e){}
+}
+async function addPtsCe(uid,currentPts){
+  await fetch(`${SUPA_URL}/rest/v1/v4_activity_points?user_id=eq.${uid}`,{method:'PATCH',headers:H,body:JSON.stringify({points:currentPts+5})});
+  toast('+5 poin ditambahkan!');loadCeLeaderboard();
+}
+
+// ADMIN PANEL
+async function loadAdminPanel(){
+  loadAdminPosts();loadAdminMembers();
+}
+async function loadAdminPosts(){
+  const el=document.getElementById('adminPostList');el.innerHTML='<div class="loading">memuat</div>';
+  try{
+    const posts=await sb('v4_forum_posts?order=created_at.desc&limit=20&select=*');
+    if(!posts||posts.length===0){el.innerHTML='<div class="empty">// belum ada post</div>';return;}
+    const uids=[...new Set(posts.map(p=>p.user_id))];
+    const us=await sb(`v4_users?id=in.(${uids.join(',')})&select=id,username`);
+    const umap={};us.forEach(u=>umap[u.id]=u);
+    el.innerHTML=posts.map(p=>`<div class="member-card"><div class="member-info"><div class="member-name" style="font-size:12px;">${esc(p.title)}</div><div style="font-size:10px;color:var(--text);font-family:'Share Tech Mono',monospace;">${esc(umap[p.user_id]?.username||'?')} · ${fDate(p.created_at)}</div></div><button class="btn-sm" onclick="deletePost('${p.id}');loadAdminPosts()" style="color:#ff4466;">🗑️</button></div>`).join('');
+  }catch(e){}
+}
+async function loadAdminMembers(){
+  const el=document.getElementById('adminMemberList');
+  try{
+    const users=await sb('v4_users?select=id,username,role,last_seen&order=created_at.asc');
+    const cutoff=new Date(Date.now()-5*60*1000).toISOString();
+    el.innerHTML=users.map(u=>{const on=u.last_seen&&u.last_seen>cutoff;return`<div class="member-card"><div class="online-dot ${on?'on':''}"></div><div class="member-info"><div class="member-name">${esc(u.username)}</div><span class="role-tag badge-${rbc(u.role)}">${u.role}</span></div></div>`;}).join('');
+  }catch(e){}
+}
+
+// INIT
+async function init(){
+  // Default tampilkan tab LOGIN
+  document.getElementById('loginForm').style.display='block';
+  document.getElementById('registerForm').style.display='none';
+  document.getElementById('tabLogin').classList.add('active');
+  document.getElementById('tabReg').classList.remove('active');
+  const lampOn=await checkLamp();
+  if(lampOn){document.getElementById('authPage').classList.add('show');}
+  // Real-time lamp check setiap 10 detik
+  setInterval(async()=>{
+    if(!currentUser)return; // hanya cek kalau sudah login
+    const s=await sb('v4_app_settings?id=eq.1&select=lamp_on,maintenance_msg');
+    if(!s||s.length===0)return;
+    const lampOn=s[0].lamp_on;
+    if(!lampOn&&currentUser.role!=='owner'){
+      // Paksa keluar jika bukan owner dan lampu mati
+      const msg=s[0].maintenance_msg||'Website sedang dalam maintenance.';
+      document.getElementById('maintenanceMsg').textContent=msg;
+      document.getElementById('maintenanceScreen').classList.add('show');
+      document.getElementById('mainApp').style.display='none';
+      document.getElementById('navbar').style.display='none';
+      document.getElementById('bottomNav').style.display='none';
+    }
+  },10000);
+}
+init();
+document.addEventListener('keydown',e=>{if(e.key==='Enter'){if(document.getElementById('loginForm').style.display!=='none'&&document.getElementById('authPage').classList.contains('show'))doLogin();}});
+
+// ===== VIP SYSTEM =====
+let currentVip=null;
+
+async function checkVipStatus(userId){
+  try{
+    const res=await sb(`v4_vip_members?user_id=eq.${userId}&select=*`);
+    if(!res||res.length===0)return null;
+    const vip=res[0];
+    if(new Date(vip.expires_at)<new Date()){
+      // Expired — hapus
+      await fetch(`${SUPA_URL}/rest/v1/v4_vip_members?user_id=eq.${userId}`,{method:'DELETE',headers:H});
+      return null;
+    }
+    return vip;
+  }catch(e){return null;}
+}
+
+async function loadVipPage(){
+  currentVip=await checkVipStatus(currentUser.id);
+  const box=document.getElementById('vipStatusBox');
+  const now=new Date();
+  if(currentVip){
+    const exp=new Date(currentVip.expires_at);
+    const days=Math.ceil((exp-now)/86400000);
+    box.innerHTML=`
+      <div style="background:linear-gradient(135deg,rgba(255,200,0,0.12),rgba(255,107,0,0.08));border:1px solid rgba(255,200,0,0.4);border-radius:14px;padding:20px;text-align:center;">
+        <div style="font-size:40px;margin-bottom:8px;">👑</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:16px;color:#ffd700;margin-bottom:4px;">KAMU ADALAH VIP!</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text);">Berakhir: ${fDate(currentVip.expires_at)} · Sisa ${days} hari</div>
+        <div style="margin-top:10px;"><span class="vip-badge vip-glow">👑 VIP MEMBER</span></div>
+      </div>`;
+  }else{
+    box.innerHTML=`
+      <div style="background:var(--dark2);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center;">
+        <div style="font-size:32px;margin-bottom:8px;">🔒</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:14px;color:var(--text);margin-bottom:4px;">BELUM VIP</div>
+        <div style="font-size:12px;color:var(--text);font-family:'Share Tech Mono',monospace;">Masukkan kode VIP untuk aktivasi</div>
+      </div>`;
+  }
+  // Tampilkan panel owner jika owner
+  if(isOwner(currentUser.role)){
+    document.getElementById('ownerVipPanel').style.display='block';
+    loadVipCodes();loadVipMembers();
+  }
+}
+
+async function redeemCode(){
+  const code=document.getElementById('redeemInput').value.trim().toUpperCase();
+  if(!code)return toast('Masukkan kode VIP dulu',true);
+  try{
+    // Cek kode valid
+    const res=await sb(`v4_redeem_codes?code=eq.${encodeURIComponent(code)}&select=*`);
+    if(!res||res.length===0)return toast('❌ Kode tidak ditemukan',true);
+    const rc=res[0];
+    if(rc.is_used)return toast('❌ Kode sudah digunakan',true);
+    // Aktifkan VIP
+    const expires=new Date();
+    expires.setDate(expires.getDate()+rc.duration_days);
+    // Hapus VIP lama jika ada
+    await fetch(`${SUPA_URL}/rest/v1/v4_vip_members?user_id=eq.${currentUser.id}`,{method:'DELETE',headers:H});
+    await sb('v4_vip_members','POST',{user_id:currentUser.id,expires_at:expires.toISOString(),code_used:code});
+    // Mark kode sebagai used
+    await fetch(`${SUPA_URL}/rest/v1/v4_redeem_codes?id=eq.${rc.id}`,{method:'PATCH',headers:H,body:JSON.stringify({is_used:true,used_by:currentUser.id,used_at:new Date().toISOString()})});
+    document.getElementById('redeemInput').value='';
+    toast(`✅ VIP aktif selama ${rc.duration_days} hari!`);
+    // Tutup iklan jika ada
+    closeAd();
+    loadVipPage();
+    // Update points
+    await addPoints(10);
+  }catch(e){toast('Gagal redeem kode',true);}
+}
+
+function isOwner(r){return r==='owner';}
+
+async function createVipCode(){
+  let code=document.getElementById('vipCodeInput').value.trim().toUpperCase();
+  const duration=parseInt(document.getElementById('vipDuration').value);
+  // Generate kode jika kosong
+  if(!code){
+    const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    code='VIP-'+Array.from({length:8},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+  }
+  if(!code.startsWith('VIP-'))code='VIP-'+code;
+  try{
+    await sb('v4_redeem_codes','POST',{code,duration_days:duration,created_by:currentUser.id});
+    document.getElementById('vipCodeInput').value='';
+    toast(`✅ Kode ${code} dibuat! Durasi ${duration} hari`);
+    loadVipCodes();
+  }catch(e){toast('Gagal buat kode — mungkin sudah ada',true);}
+}
+
+async function loadVipCodes(){
+  const el=document.getElementById('vipCodeList');
+  try{
+    const codes=await sb('v4_redeem_codes?order=created_at.desc&select=*');
+    if(!codes||codes.length===0){el.innerHTML='<div class="empty">// belum ada kode</div>';return;}
+    el.innerHTML=codes.map(c=>`
+      <div style="display:flex;align-items:center;gap:8px;padding:10px;background:var(--dark3);border-radius:8px;border:1px solid ${c.is_used?'rgba(100,100,100,0.2)':'rgba(255,200,0,0.2)'};margin-bottom:6px;">
+        <div style="flex:1;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:13px;color:${c.is_used?'var(--text)':'#ffd700'};letter-spacing:2px;">${esc(c.code)}</div>
+          <div style="font-size:10px;color:var(--text);font-family:'Share Tech Mono',monospace;margin-top:2px;">${c.duration_days} hari · ${c.is_used?'✅ Terpakai':'⏳ Belum dipakai'}</div>
+        </div>
+        ${!c.is_used?`<button onclick="copyCode('${c.code}')" style="background:var(--glass);border:1px solid var(--border);color:var(--cyan);padding:5px 10px;border-radius:4px;font-size:10px;cursor:pointer;">📋</button>`:''}
+        <button onclick="deleteCode('${c.id}')" style="background:transparent;border:1px solid rgba(255,50,50,0.3);color:#ff6666;padding:5px 10px;border-radius:4px;font-size:10px;cursor:pointer;">🗑️</button>
+      </div>`).join('');
+  }catch(e){el.innerHTML='<div class="empty">// gagal memuat</div>';}
+}
+
+function copyCode(code){navigator.clipboard?.writeText(code).then(()=>toast(`📋 Kode ${code} disalin!`)).catch(()=>{toast(`Kode: ${code}`);});}
+
+async function deleteCode(id){
+  if(!confirm('Hapus kode ini?'))return;
+  await fetch(`${SUPA_URL}/rest/v1/v4_redeem_codes?id=eq.${id}`,{method:'DELETE',headers:H});
+  toast('Kode dihapus');loadVipCodes();
+}
+
+async function loadVipMembers(){
+  const el=document.getElementById('vipMemberList');
+  try{
+    const vipers=await sb('v4_vip_members?order=created_at.desc&select=*');
+    if(!vipers||vipers.length===0){el.innerHTML='<div class="empty">// belum ada VIP member</div>';return;}
+    const uids=vipers.map(v=>v.user_id);
+    const us=await sb(`v4_users?id=in.(${uids.join(',')})&select=id,username,role`);
+    const umap={};us.forEach(u=>umap[u.id]=u);
+    const now=new Date();
+    el.innerHTML=vipers.map(v=>{
+      const u=umap[v.user_id]||{username:'?',role:'member'};
+      const exp=new Date(v.expires_at);
+      const days=Math.ceil((exp-now)/86400000);
+      const expired=days<=0;
+      return`<div style="display:flex;align-items:center;gap:8px;padding:10px;background:var(--dark3);border-radius:8px;border:1px solid ${expired?'rgba(100,100,100,0.2)':'rgba(255,200,0,0.2)'};margin-bottom:6px;">
+        <span style="font-size:18px;">${expired?'🔒':'👑'}</span>
+        <div style="flex:1;">
+          <div style="font-family:'Orbitron',sans-serif;font-size:12px;color:${expired?'var(--text)':'#ffd700'};">${esc(u.username)}</div>
+          <div style="font-size:10px;color:var(--text);font-family:'Share Tech Mono',monospace;">${expired?'EXPIRED':`Sisa ${days} hari — ${fDate(v.expires_at)}`}</div>
+        </div>
+        <span class="role-tag badge-${rbc(u.role)}">${u.role}</span>
+      </div>`;
+    }).join('');
+  }catch(e){}
+}
+
+// ===== IKLAN POPUP =====
+let adShown=false;
+function showAd(){
+  if(adShown||currentVip)return;
+  adShown=true;
+  document.getElementById('adPopup').style.display='block';
+}
+function closeAd(){document.getElementById('adPopup').style.display='none';}
+function goToV5(){window.open('https://v5-kappa-azure.vercel.app','_blank');closeAd();}
+
+// Tampilkan iklan setiap 3 menit untuk non-VIP
+async function initAds(){
+  currentVip=await checkVipStatus(currentUser.id);
+  if(!currentVip){
+    setTimeout(()=>showAd(),30000);
+    setInterval(()=>{adShown=false;setTimeout(()=>showAd(),1000);},180000);
+  }
+}
+</script>
+</body>
+</html>
